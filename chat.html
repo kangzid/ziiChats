@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+</head>
+<body>
+  <div id="chat-box"></div>
+  <input type="text" id="message-input" placeholder="Type your message...">
+  <button onclick="sendMessage()">Send</button>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyDLxIW0vnkjrD5my5qkGue5OEiTONSOX2M",
+    authDomain: "ziichats.firebaseapp.com",
+    databaseURL: "https://ziichats-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "ziichats",
+    storageBucket: "ziichats.appspot.com",
+    messagingSenderId: "255190565645",
+    appId: "1:255190565645:web:734fe2d68c95eb23762644",
+    measurementId: "G-T4WMHX361T"
+  };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const chatBox = document.getElementById('chat-box');
+    const messageInput = document.getElementById('message-input');
+
+    function sendMessage() {
+      const message = messageInput.value;
+      if (message.trim() !== '') {
+        const newMessageRef = database.ref('messages').push();
+        newMessageRef.set({
+          text: message
+        });
+        messageInput.value = '';
+      }
+    }
+
+    function displayMessage(snapshot) {
+      const message = snapshot.val();
+      const messageElement = document.createElement('div');
+      messageElement.innerText = message.text;
+      chatBox.appendChild(messageElement);
+    }
+
+    // Listen for new messages in the database and display them
+    database.ref('messages').on('child_added', displayMessage);
+  </script>
+</body>
+</html>
